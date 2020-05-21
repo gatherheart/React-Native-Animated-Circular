@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Button, Text, Animated, Easing } from "react-native";
 import Root from "./src/Root";
+import Slide from "./src/Slide";
 const animatedValue1 = new Animated.Value(0);
 const animatedValue2 = new Animated.Value(0);
 const animatedValue3 = new Animated.Value(0);
@@ -46,7 +47,6 @@ export default function App() {
       }),
     ]).start(() =>
       setTopIndex((curr) => {
-        console.log(curr);
         return 1;
       })
     );
@@ -67,9 +67,8 @@ export default function App() {
     });
   };
 
-  useEffect(() => {
-    rotateAnimation();
-  }, []);
+  useEffect(() => {}, []);
+  return <Slide></Slide>;
 
   return (
     <View style={{ alignItems: "center" }}>
