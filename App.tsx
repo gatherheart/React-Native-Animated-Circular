@@ -4,36 +4,33 @@ import Root from "./src/Root";
 const animatedValue1 = new Animated.Value(0);
 const animatedValue2 = new Animated.Value(0);
 const animatedValue3 = new Animated.Value(0);
+const animatedValue4 = new Animated.Value(0);
 
 export default function App() {
   const [done, setDone] = useState(0);
+  const [topIndex, setTopIndex] = useState(0);
+
   const timePerDegree = 1200 / 360;
   const rotate1 = animatedValue1.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "180deg"],
+    outputRange: ["0deg", "360deg"],
   });
 
   const rotate2 = animatedValue2.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
+    outputRange: ["0deg", "180deg"],
   });
 
   const rotate3 = animatedValue3.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
+    outputRange: ["0deg", "180deg"],
   });
 
-  const elevation = animatedValue1.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-
-  const rotate4 = animatedValue2.interpolate({
+  const rotate4 = animatedValue4.interpolate({
     inputRange: [0, 1],
     outputRange: ["-360deg", "360deg"],
   });
-
-  useEffect(() => {
+  const rotateAnimation = () => {
     Animated.parallel([
       Animated.timing(animatedValue1, {
         toValue: 1,
@@ -43,20 +40,35 @@ export default function App() {
       }),
       Animated.timing(animatedValue2, {
         toValue: 1,
-        duration: 1800 * 2 * timePerDegree,
+        duration: 1800 * timePerDegree,
         useNativeDriver: true,
         easing: Easing.linear,
       }),
-      Animated.sequence([
-        Animated.delay(1800),
-        Animated.timing(animatedValue3, {
-          toValue: 1,
-          duration: 1800 * timePerDegree,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        }),
-      ]),
-    ]).start();
+    ]).start(() =>
+      setTopIndex((curr) => {
+        console.log(curr);
+        return 1;
+      })
+    );
+    Animated.sequence([
+      Animated.delay(1800 * timePerDegree),
+      Animated.timing(animatedValue3, {
+        toValue: 1,
+        duration: (1800 / 2) * timePerDegree,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+    ]).start(() => {
+      setTopIndex(0);
+
+      animatedValue1.setValue(0);
+      animatedValue2.setValue(0);
+      animatedValue3.setValue(0);
+    });
+  };
+
+  useEffect(() => {
+    rotateAnimation();
   }, []);
 
   return (
@@ -125,7 +137,7 @@ export default function App() {
               position: "absolute",
               borderColor: "black",
               backgroundColor: "black",
-              zIndex: 0,
+              zIndex: 1,
             },
             {
               transform: [
@@ -147,9 +159,9 @@ export default function App() {
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
               position: "absolute",
-              borderColor: "black",
-              backgroundColor: "black",
-              elevation: elevation,
+              borderColor: "white",
+              backgroundColor: "white",
+              zIndex: 1,
             },
             {
               transform: [
@@ -171,9 +183,9 @@ export default function App() {
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
               position: "absolute",
-              borderColor: "white",
-              backgroundColor: "white",
-              zIndex: 0,
+              borderColor: "black",
+              backgroundColor: topIndex === 1 ? "black" : "white",
+              zIndex: topIndex,
             },
             {
               transform: [
@@ -185,7 +197,6 @@ export default function App() {
             },
           ]}
         ></Animated.View>
-
         <Animated.View
           style={[
             {
@@ -198,10 +209,7 @@ export default function App() {
               position: "absolute",
               borderColor: "purple",
               backgroundColor: "purple",
-              zIndex: 2,
-            },
-            {
-              transform: [{ rotate: rotate2 }, { scale: 1.0 }],
+              zIndex: 3,
             },
           ]}
         ></Animated.View>
